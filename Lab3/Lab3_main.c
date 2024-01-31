@@ -47,7 +47,6 @@ use FSM to make a pattern: Forward, right turn 90 degrees, backwards, left turn 
 void main(void)
 {
 
-
        WDT_A->CTL = WDT_A_CTL_PW | WDT_A_CTL_HOLD;     // stop watchdog timer
        Clock_Init48MHz();  // makes bus clock 48 MHz
        //Call the appropriate functions from Init_Ports.c
@@ -56,11 +55,12 @@ void main(void)
        Port3_Init();
        Port5_Init();
        //Call the appropriate functions from Init_Timers.c
+       TimerA0_Init();
        //These are the four states of the state machine
-       enum motor_states {
+       enum motor_states {FORWARD, RIGHT, LEFT, BACKWARDS}state, prevState;
 
-       state =                    //start state
-       prevState =                //used to know when the state has changed
+       state = FORWARD;//start state
+       prevState = !FORWARD;//used to know when the state has changed
        uint16_t stateTimer;       //used to stay in a state
        bool isNewState;           //true when the state has switched
 
@@ -74,10 +74,77 @@ void main(void)
           //each case below should have entry housekeeping, state business and exit housekeeping
           //remember to reset the stateTimer each time you enter a new state
           //you must assign a new state when stateTimer reaches the correct value
-          case
-                  break;
-          case
-                  break;
+          case FORWARD:
+              //entry housekeeping
+              if(isNewState){
+                  stateTimer = 0;
+              }
+
+              Motor_Forward(14999, 14999);
+
+              //state business
+              stateTimer++;
+
+              //exit housekeeping
+              if(stateTimer >= 1){
+                  Motor_Stop();
+                  state = RIGHT;
+              }
+              break;
+
+          case RIGHT:
+              //entry housekeeping
+              if(isNewState){
+                  stateTimer = 0;
+              }
+
+              Motor_Right(0, 14999);
+
+              //state business
+              stateTimer++;
+
+              //exit housekeeping
+              if(stateTimer >= 1){
+                  Motor_Stop();
+                  state = BACKWARDS;
+              }
+              break;
+
+          case BACKWARDS:
+              //entry housekeeping
+              if(isNewState){
+                  stateTimer = 0;
+              }
+
+              Motor_Backward(14999, 14999);
+
+              //state business
+              stateTimer++;
+
+              //exit housekeeping
+              if(stateTimer >= 1){
+                  Motor_Stop();
+                  state = LEFT;
+              }
+              break;
+
+          case LEFT:
+              //entry housekeeping
+              if(isNewState){
+                  stateTimer = 0;
+              }
+
+              Motor_Left(14999, 0);
+
+              //state business
+              stateTimer++;
+
+              //exit housekeeping
+              if(stateTimer >= 1){
+                  Motor_Stop();
+                  state = FORWARD;
+              }
+              break;
 
           } //switch
           Clock_Delay1ms(10);  //10ms delay so that each increment of statetimer is 10ms
