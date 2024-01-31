@@ -37,9 +37,9 @@ void TimerA0_Init(void){
   //	counts for desired delay
 
 
-    //pins 9 and 8 to 1 and 0 sets clock source to SMCLK
+    //pins 9 and 8 to 1 and 0 sets clock source to SMCLK, set clock divider where N = 2, set continuous mode
     TA0CTL &= ~0x0030;//stop timer
-    TA0CTL |= 0x0200; TA0CTL &= ~0x0010;//0000 0010 0000 0000
+    TA0CTL |= 0x0260; TA0CTL &= ~0x0110;//0000 0010 0110 0000(bits 9, 6, and 5 set to 1), ~0000 0001 0001 0000(bits 8 and 4 set to 0)
     TA0CCTL3 |= 0x00E0;//outmode 7(Reset/Set) for CCR3
     TA0CCTL4 |= 0x00E0;//outmode 7(Reset/Set) for CCR4
 
@@ -47,6 +47,7 @@ void TimerA0_Init(void){
     //Time = 10ms Counts = 60,000 N = 2
     TA0CCR0 = 59999;//60,000 - 1(starts at 0)
     TA0CCR3 = 14999;//(60,000 * .25) - 1 for a 25% duty cycle
+    TA0CCR4 = 14999;//(60,000 * .25) - 1 for a 25% duty cycle
 }
 
 // ------------TimerA1_Init------------
