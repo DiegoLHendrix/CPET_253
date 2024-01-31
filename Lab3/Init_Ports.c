@@ -56,8 +56,8 @@ void Port2_Init(void){
 
     P2DIR |= 0x07;//Setting P2.0/1/2 (red, green, blue respectively) as outputs
     P2DIR |= 0xC0;//bits 7 and 6 set as outputs
-    //SEL = 01 to activate secondary module function
-    P2SEL1 |= 0x00;
+    //SEL = 01(SEL1, SEL0) to activate secondary module function
+    P2SEL1 &= ~0xC0;//~1100 0000
     P2SEL0 |= 0xC0;//1100 0000
 }
 
@@ -65,7 +65,7 @@ void Port2_Init(void){
 // First set the pin directions
 // Enable resistors for inputs
 // Set input resistors for pull-up or pull-down
-// Enable alternate pin functions, if appliable
+// Enable alternate pin functions, if applicable
 // Drive initial values on outputs
 // Input: none
 // Output: none
@@ -85,7 +85,7 @@ void Port3_Init(void){
 // First set the pin directions
 // Enable resistors for inputs
 // Set input resistors for pull-up or pull-down
-// Enable alternate pin functions, if appliable
+// Enable alternate pin functions, if applicable
 // Drive initial values on outputs
 // Input: none
 // Output: none
@@ -103,7 +103,7 @@ void Port4_Init(void){
 // First set the pin directions
 // Enable resistors for inputs
 // Set input resistors for pull-up or pull-down
-// Enable alternate pin functions, if appliable
+// Enable alternate pin functions, if applicable
 // Drive initial values on outputs
 // Input: none
 // Output: none
@@ -123,7 +123,7 @@ void Port5_Init(void){
 // First set the pin directions
 // Enable resistors for inputs
 // Set input resistors for pull-up or pull-down
-// Enable alternate pin functions, if appliable
+// Enable alternate pin functions, if applicable
 // Drive initial values on outputs
 // Input: none
 // Output: none
@@ -141,7 +141,7 @@ void Port6_Init(void){
 // First set the pin directions
 // Enable resistors for inputs
 // Set input resistors for pull-up or pull-down
-// Enable alternate pin functions, if appliable
+// Enable alternate pin functions, if applicable
 // Drive initial values on outputs
 // Input: none
 // Output: none
@@ -159,7 +159,7 @@ void Port7_Init(void){
 // First set the pin directions
 // Enable resistors for inputs
 // Set input resistors for pull-up or pull-down
-// Enable alternate pin functions, if appliable
+// Enable alternate pin functions, if applicable
 // Drive initial values on outputs
 // Input: none
 // Output: none
@@ -177,7 +177,7 @@ void Port8_Init(void){
 // First set the pin directions
 // Enable resistors for inputs
 // Set input resistors for pull-up or pull-down
-// Enable alternate pin functions, if appliable
+// Enable alternate pin functions, if applicable
 // Drive initial values on outputs
 // Input: none
 // Output: none
@@ -195,7 +195,7 @@ void Port9_Init(void){
 // First set the pin directions
 // Enable resistors for inputs
 // Set input resistors for pull-up or pull-down
-// Enable alternate pin functions, if appliable
+// Enable alternate pin functions, if applicable
 // Drive initial values on outputs
 // Input: none
 // Output: none
@@ -213,7 +213,7 @@ void Port10_Init(void){
 // First set the pin directions
 // Enable resistors for inputs
 // Set input resistors for pull-up or pull-down
-// Enable alternate pin functions, if appliable
+// Enable alternate pin functions, if applicable
 // Drive initial values on outputs
 // Input: none
 // Output: none

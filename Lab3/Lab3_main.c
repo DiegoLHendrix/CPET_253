@@ -43,10 +43,8 @@ use FSM to make a pattern: Forward, right turn 90 degrees, backwards, left turn 
 #include "..\inc\Init_Timers.h"
 #include "..\inc\motor.h"
 
-
 void main(void)
 {
-
        WDT_A->CTL = WDT_A_CTL_PW | WDT_A_CTL_HOLD;     // stop watchdog timer
        Clock_Init48MHz();  // makes bus clock 48 MHz
        //Call the appropriate functions from Init_Ports.c
@@ -67,8 +65,8 @@ void main(void)
        
        while(1)
        {
-           isNewState = (state != prevState);
-           prevState = state;  //save state for next time
+          isNewState = (state != prevState);
+          prevState = state;  //save state for next time
 
           switch (state) {
           //each case below should have entry housekeeping, state business and exit housekeeping
@@ -86,7 +84,7 @@ void main(void)
               stateTimer++;
 
               //exit housekeeping
-              if(stateTimer >= 1){
+              if(stateTimer >= 1000){
                   Motor_Stop();
                   state = RIGHT;
               }
@@ -104,7 +102,7 @@ void main(void)
               stateTimer++;
 
               //exit housekeeping
-              if(stateTimer >= 1){
+              if(stateTimer >= 1000){
                   Motor_Stop();
                   state = BACKWARDS;
               }
@@ -122,7 +120,7 @@ void main(void)
               stateTimer++;
 
               //exit housekeeping
-              if(stateTimer >= 1){
+              if(stateTimer >= 1000){
                   Motor_Stop();
                   state = LEFT;
               }
@@ -140,7 +138,7 @@ void main(void)
               stateTimer++;
 
               //exit housekeeping
-              if(stateTimer >= 1){
+              if(stateTimer >= 1000){
                   Motor_Stop();
                   state = FORWARD;
               }
