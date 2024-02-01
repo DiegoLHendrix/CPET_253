@@ -58,7 +58,6 @@ void LED_Color (uint8_t color) {
 
 void main(void)
 {
-    P2OUT = 0x00;
        WDT_A->CTL = WDT_A_CTL_PW | WDT_A_CTL_HOLD;     // stop watchdog timer
        Clock_Init48MHz();  // makes bus clock 48 MHz
        //Call the appropriate functions from Init_Ports.c
@@ -66,8 +65,10 @@ void main(void)
        Port2_Init();
        Port3_Init();
        Port5_Init();
+
        //Call the appropriate functions from Init_Timers.c
        TimerA0_Init();
+
        //These are the four states of the state machine
        enum motor_states {FORWARD, RIGHT, LEFT, BACKWARDS}state, prevState;
 
@@ -76,7 +77,7 @@ void main(void)
        uint16_t stateTimer;       //used to stay in a state
        bool isNewState;           //true when the state has switched
 
-       
+       /**/
        while(1)
        {
           isNewState = (state != prevState);
@@ -92,14 +93,13 @@ void main(void)
                   stateTimer = 0;
               }
 
+              //state business
               LED_Color(RED);
               Motor_Forward(14999, 14999);
-
-              //state business
               stateTimer++;
 
               //exit housekeeping
-              if(stateTimer >= 1000){
+              if(stateTimer >= 100){
                   Motor_Stop();
                   state = RIGHT;
               }
@@ -111,14 +111,13 @@ void main(void)
                   stateTimer = 0;
               }
 
+              //state business
               LED_Color(GREEN);
               Motor_Right(0, 14999);
-
-              //state business
               stateTimer++;
 
               //exit housekeeping
-              if(stateTimer >= 1000){
+              if(stateTimer >= 100){
                   Motor_Stop();
                   state = BACKWARDS;
               }
@@ -130,14 +129,13 @@ void main(void)
                   stateTimer = 0;
               }
 
+              //state business
               LED_Color(BLUE);
               Motor_Backward(14999, 14999);
-
-              //state business
               stateTimer++;
 
               //exit housekeeping
-              if(stateTimer >= 1000){
+              if(stateTimer >= 100){
                   Motor_Stop();
                   state = LEFT;
               }
@@ -149,14 +147,13 @@ void main(void)
                   stateTimer = 0;
               }
 
+              //state business
               LED_Color(PURPLE);
               Motor_Left(14999, 0);
-
-              //state business
               stateTimer++;
 
               //exit housekeeping
-              if(stateTimer >= 1000){
+              if(stateTimer >= 100){
                   Motor_Stop();
                   state = FORWARD;
               }
@@ -165,4 +162,5 @@ void main(void)
           } //switch
           Clock_Delay1ms(10);  //10ms delay so that each increment of statetimer is 10ms
        } //while(1)
+       /**/
    } //main()

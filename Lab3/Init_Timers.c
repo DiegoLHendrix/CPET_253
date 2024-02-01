@@ -44,8 +44,6 @@ void TimerA0_Init(void){
     //Start PWM
     //Time = 10ms Counts = 60,000 N = 2
     TA0CCR0 = 59999;//60,000 - 1(starts at 0), counts for PWM period
-    TA0CCR3 = 14999;//(60,000 * .25) - 1 for a 25% duty cycle
-    TA0CCR4 = 14999;//(60,000 * .25) - 1 for a 25% duty cycle
 }
 
 // ------------TimerA1_Init------------

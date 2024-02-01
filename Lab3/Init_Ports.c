@@ -78,7 +78,7 @@ void Port3_Init(void){
   // Use the PxSEL0 and PxSEL1 registers to enable alternate pin functions, if applicable
   // Use the port output register to put outputs to an initial state
 
-    P3DIR |= 0xC0;//1100 0000. Set bits 7 and 6 (left and right motor sleep respectively) as outputs
+    P3DIR |= 0xC0;//1100 0000. Set left and right motor sleep as outputs
 }
 
 // ------------Port4_Init------------
@@ -116,7 +116,7 @@ void Port5_Init(void){
   // Use the PxSEL0 and PxSEL1 registers to enable alternate pin functions, if applicable
   // Use the port output register to put outputs to an initial state
 
-    P5DIR |= 0x30;//0011 0000. Set pins 4 and 5(left and right motor direction respectively) as outputs
+    P5DIR |= 0x30;//0011 0000. Set left and right motor direction as outputs
 }
 
 // ------------Port6_Init------------
