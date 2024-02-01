@@ -43,8 +43,22 @@ use FSM to make a pattern: Forward, right turn 90 degrees, backwards, left turn 
 #include "..\inc\Init_Timers.h"
 #include "..\inc\motor.h"
 
+#define RED 0x01 //0000 0001
+#define GREEN 0x02 //0000 0010
+#define BLUE 0x04 //0000 0100
+#define PURPLE 0x05 //0000 0101
+
+void LED_Color (uint8_t color) {
+//This is a simple function to turn on the multi-colored LED on the MSP432 Launchpad
+//board according to the argument passed into the function
+//The LED is controlled by bits 0, 1 and 2 on PORT2
+    P2OUT &= ~0x07; //first turn off all colors
+    P2OUT |= color; //second turn on the input color
+}
+
 void main(void)
 {
+    P2OUT = 0x00;
        WDT_A->CTL = WDT_A_CTL_PW | WDT_A_CTL_HOLD;     // stop watchdog timer
        Clock_Init48MHz();  // makes bus clock 48 MHz
        //Call the appropriate functions from Init_Ports.c
@@ -78,6 +92,7 @@ void main(void)
                   stateTimer = 0;
               }
 
+              LED_Color(RED);
               Motor_Forward(14999, 14999);
 
               //state business
@@ -96,6 +111,7 @@ void main(void)
                   stateTimer = 0;
               }
 
+              LED_Color(GREEN);
               Motor_Right(0, 14999);
 
               //state business
@@ -114,6 +130,7 @@ void main(void)
                   stateTimer = 0;
               }
 
+              LED_Color(BLUE);
               Motor_Backward(14999, 14999);
 
               //state business
@@ -132,6 +149,7 @@ void main(void)
                   stateTimer = 0;
               }
 
+              LED_Color(PURPLE);
               Motor_Left(14999, 0);
 
               //state business

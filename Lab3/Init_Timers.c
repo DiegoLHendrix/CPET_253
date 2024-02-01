@@ -37,8 +37,7 @@ void TimerA0_Init(void){
   //	counts for desired delay
 
     TA0CTL &= ~0x0030;//stop timer
-    TA0CTL |= 0x0250; //0000 0010 0101 0000(bits 9, 6, and 4 set to 1)
-    TA0CTL &= ~0x01A0;//~0000 0001 1010 0000(bits 8, 7, and 5 set to 0)
+    TA0CTL |= 0x0250; TA0CTL &= ~0x01A0;//0000 0010 0101 0000, ~0000 0001 1010 0000
     TA0CCTL3 |= 0x00E0;//outmode 7(Reset/Set) for CCR3
     TA0CCTL4 |= 0x00E0;//outmode 7(Reset/Set) for CCR4
 
