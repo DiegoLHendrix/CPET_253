@@ -56,6 +56,7 @@ void LED_Color (uint8_t color) {
     P2OUT |= color; //second turn on the input color
 }
 
+
 void main(void)
 {
        WDT_A->CTL = WDT_A_CTL_PW | WDT_A_CTL_HOLD;     // stop watchdog timer
@@ -77,7 +78,7 @@ void main(void)
        uint16_t stateTimer;       //used to stay in a state
        bool isNewState;           //true when the state has switched
 
-       /**/
+
        while(1)
        {
           isNewState = (state != prevState);
@@ -91,11 +92,11 @@ void main(void)
               //entry housekeeping
               if(isNewState){
                   stateTimer = 0;
+                  Motor_Forward(14999, 14999);
+                  LED_Color(RED);
               }
 
               //state business
-              LED_Color(RED);
-              Motor_Forward(14999, 14999);
               stateTimer++;
 
               //exit housekeeping
@@ -109,11 +110,11 @@ void main(void)
               //entry housekeeping
               if(isNewState){
                   stateTimer = 0;
+                  Motor_Right(0, 14999);
+                  LED_Color(GREEN);
               }
 
               //state business
-              LED_Color(GREEN);
-              Motor_Right(0, 14999);
               stateTimer++;
 
               //exit housekeeping
@@ -127,11 +128,11 @@ void main(void)
               //entry housekeeping
               if(isNewState){
                   stateTimer = 0;
+                  Motor_Backward(14999, 14999);
+                  LED_Color(BLUE);
               }
 
               //state business
-              LED_Color(BLUE);
-              Motor_Backward(14999, 14999);
               stateTimer++;
 
               //exit housekeeping
@@ -145,11 +146,11 @@ void main(void)
               //entry housekeeping
               if(isNewState){
                   stateTimer = 0;
+                  Motor_Left(14999, 0);
+                  LED_Color(PURPLE);
               }
 
               //state business
-              LED_Color(PURPLE);
-              Motor_Left(14999, 0);
               stateTimer++;
 
               //exit housekeeping
@@ -163,4 +164,4 @@ void main(void)
           Clock_Delay1ms(10);  //10ms delay so that each increment of statetimer is 10ms
        } //while(1)
        /**/
-   } //main()
+} //main()
