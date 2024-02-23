@@ -120,8 +120,9 @@ void TimerA3_Init(void){
   //	counts for desired delay
 
     //SMCLK, N = 4, stop mode
-    TA3CTL = 0x02A0;//0000 0010 1000 0000
+    TA3CTL |= 0x0280;//0000 0010 1000 0000
+    TA3CTL &= ~0x0170;//0000 0001 0111 0000
 
     TA3CCTL2 = 0x00E0;//outmmode 7
-    TA3CCR0 = 59999;//counts
+//    TA3CCR0 = 59999;//counts
 }

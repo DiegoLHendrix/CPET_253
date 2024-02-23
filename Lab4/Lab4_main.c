@@ -61,7 +61,7 @@ uint32_t pulseIn (void);
 
 void ServoInit(void)  //This function initializes the servo to be centered (0 degrees)
 {
-    Servo(4499);//call Servo() function to center servo, angle_count = counts * (4/12MHz)
+    Servo(4500);//call Servo() function to center servo, angle_count = counts * (4/12MHz)
     Clock_Delay1us(20000);//delay here to give servo time to move - can use built in timer function
     TA3CTL &= ~0x0030;//stop the timer
     return;
@@ -148,19 +148,23 @@ void main(void)
 	uint16_t stateTimer = 0;           //used to stay in a state
 	bool isNewState;              //true when the state has switched
 
-	while(1){
-	    Servo(1500);//right
-	    Clock_Delay1ms(1000);//one second delay
+	while(0){
+	    Motor_Stop();
+//	    Servo(1500);//right
+//	    Clock_Delay1ms(1000);//one second delay
+
 	    Servo(4500);//center
-	    Clock_Delay1ms(1000);
-	    Servo(7500);//left
-	    Clock_Delay1ms(1000);
+//	    Clock_Delay1ms(1000);
+
+//	    Servo(7500);//left
+//	    Clock_Delay1ms(1000);
+
 	    distance = distanceInCm();
-	    Clock_Delay1ms(10);
+//	    Clock_Delay1ms(10);
 	}
 
 	/**/
-	while(0) {
+	while(1) {
 	    isNewState = (state != prevState);
 	    prevState = state;
 
@@ -168,8 +172,10 @@ void main(void)
 	    case FORWARD:
 	        //entry housekeeping
 	        if(isNewState){
+	            P2OUT = 0x00;
 	            stateTimer = 0;
-	            Motor_Forward(14999, 14999);
+	            Servo(4500);//center
+	            Motor_Forward(14999, 14750);
 	        }
 
 	        //state business
@@ -177,7 +183,7 @@ void main(void)
 	        distance = distanceInCm();  //this needs to be moved to the states in which it is used
 
 	        //exit housekeeping
-	        if(stateTimer >= 100000 & distance < 15){
+	        if(stateTimer >= 100 && distance < 20){
 	            Motor_Stop();
 	            state = BACKWARDS;
 	        }
@@ -193,9 +199,9 @@ void main(void)
 	        stateTimer++;
 
 	        //exit housekeeping
-	        if(stateTimer >= 100){
+	        if(stateTimer >= 75){
 	            Motor_Stop();
-	            state = SWEEP_LEFT;
+	            state = SWEEP_RIGHT;
 	        }
 	        break;
 	    case SWEEP_RIGHT:
@@ -203,13 +209,14 @@ void main(void)
 	        if(isNewState){
 	            stateTimer = 0;
 	            Servo(1500);
+	            right_wall = distanceInCm();
 	        }
 
 	        //state business
-	        right_wall = distanceInCm();
+	        stateTimer++;
 
 	        //exit housekeeping
-	        if(Servo(1500)){
+	        if(stateTimer >= 100){
 	            state = SWEEP_LEFT;
 	        }
 	        break;
@@ -218,17 +225,22 @@ void main(void)
 	        if(isNewState){
 	            stateTimer = 0;
 	            Servo(7500);
+	            left_wall = distanceInCm();
 	        }
 
 	        //state business
-	        left_wall = distanceInCm();
+	        stateTimer++;
 
 	        //exit housekeeping
-	        if(Servo(7500) & left_wall < distance){
-	            state = LEFT;
-	        } else if(Servo(7500) & right_wall < distance){
-                state = RIGHT;
-            }
+	        if(stateTimer >= 100 ){
+
+	            if(right_wall < left_wall){
+	                state=RIGHT;
+	            }else if(right_wall > left_wall){
+                    state=LEFT;
+                }
+
+	        }
 	        break;
 	    case LEFT:
 	        //entry housekeeping
@@ -241,7 +253,24 @@ void main(void)
 	        stateTimer++;
 
 	        //exit housekeeping
-	        if(stateTimer >= 100){
+	        if(stateTimer >= 50){
+	            Motor_Stop();
+	            state = FORWARD;
+	        }
+	        break;
+
+	    case RIGHT:
+	        //entry housekeeping
+	        if(isNewState){
+	            stateTimer = 0;
+	            Motor_Right(0, 14999);
+	        }
+
+	        //state business
+	        stateTimer++;
+
+	        //exit housekeeping
+	        if(stateTimer >= 50){
 	            Motor_Stop();
 	            state = FORWARD;
 	        }
