@@ -98,10 +98,10 @@ void Port4_Init(void){
   // Use the PxSEL0 and PxSEL1 registers to enable alternate pin functions, if applicable
   // Use the port output register to put outputs to an initial state
 
-    //set all port 4 pins as interrupt sources
-    P4DIR &= ~0xff;//set all port 4 pins to inputs
-    P4REN |= 0xff;//enable resistors
-    P4OUT |= 0xff;//specify pull up resistors
+    //set port 4 pins as interrupt sources
+    P4DIR &= ~0xED;//set pins to inputs 1110 1101
+    P4REN |= 0xED;//enable resistors
+    P4OUT |= 0xED;//specify pull up resistors
 
 }
 

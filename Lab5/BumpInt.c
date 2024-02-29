@@ -47,6 +47,7 @@ policies, either expressed or implied, of the FreeBSD Project.
 // P4.0 Bump0, right side of robot
 
 #include <stdint.h>
+#include <stdbool.h>
 #include "msp.h"
 // Initialize Bump sensors
 // Make six Port 4 pins inputs
@@ -54,38 +55,45 @@ policies, either expressed or implied, of the FreeBSD Project.
 // pins 7,6,5,3,2,0
 // Interrupt on falling edge (on touch)
 
-#define B0 0x01//0001
-#define B1 0x04//0100
-#define B2 0x08//1000
-#define B3 0x20//0010
-#define B4 0x40//0100
-#define B5 0x80//1000
+#define left 2
+#define right 1
+
+volatile uint16_t count = 0;//interrupt happened flag
+bool wasInterrupt = false;//determine if an interrupt occured
+volatile uint8_t direction;//variable to determine direction to turn
 
 void BumpInt_Init(void){
     // write this as part of Lab 5
     P4IE |= 0xED;//enable interrupts on all pins 1110 1101
     P4IES |= 0xED;//falling edge trigger
     P4IFG &= 0xED;//clear all pending flags
-    NVIC->ISER[1] = 0x100;//enable NVIC port 4 interrupts
+    NVIC->ISER[1] = 0x40;//enable NVIC port 4 interrupts 0100 0000
 }
 
 // triggered on touch, falling edge
 void PORT4_IRQHandler(void){
     // write this as part of Lab 5
-    volatile uint8_t wasInterrupt = 0;//interrupt happened flag
+    uint16_t status = P4IV;
+    wasInterrupt = true;
 
-    if(P4IV & B0){
-        wasInterrupt += 3;
-    }else if(P4IV & B1){
-        wasInterrupt += 2;
-    }else if(P4IV & B2){
-        wasInterrupt += 1;
-    }else if(P4IV & B3){
-        wasInterrupt -= 1;
-    }else if(P4IV & B4){
-        wasInterrupt -= 2;
-    }else if(P4IV & B5){
-        wasInterrupt -= 3;
+    if(status == 0x02){
+        count += 3;
+        direction = right;
+    }else if(status == 0x06){
+        count += 2;
+        direction = right;
+    }else if(status == 0x08){
+        count += 1;
+        direction = right;
+    }else if(status == 0x0C){
+        count -= 1;
+        direction = left;
+    }else if(status == 0x0E){
+        count -= 2;
+        direction = left;
+    }else if(status == 0x10){
+        count -= 3;
+        direction = left;
     }
 
     P4IFG &= 0x00;//clear all pending flags

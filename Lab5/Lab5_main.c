@@ -45,8 +45,24 @@ use FSM to make a pattern: Forward, right turn 90 degrees, backwards, left turn 
 #include "../inc/Init_Timers.h"
 #include "../inc/BumpInt.h"
 
+#define RED 0x01 //0000 0001
+#define GREEN 0x02 //0000 0010
+#define BLUE 0x04 //0000 0100
+#define PURPLE 0x05 //0000 0101
+
+void LED_Color (uint8_t color) {
+//This is a simple function to turn on the multi-colored LED on the MSP432 Launchpad
+//board according to the argument passed into the function
+//The LED is controlled by bits 0, 1 and 2 on PORT2
+    P2OUT &= ~0x07; //first turn off all colors
+    P2OUT |= color; //second turn on the input color
+}
+
 void main(void)
 {
+     extern bool wasInterrupt;
+     extern direction;
+
        WDT_A->CTL = WDT_A_CTL_PW | WDT_A_CTL_HOLD;     // stop watchdog timer
        Clock_Init48MHz();  // makes bus clock 48 MHz
        //Call the appropriate functions from Init_Ports.c
@@ -59,8 +75,9 @@ void main(void)
        //Call the appropriate functions from Init_Timers.c
        TimerA0_Init();
 
-       EnableInterrupts();
+       DisableInterrupts();
        BumpInt_Init();
+       EnableInterrupts();
 
        //These are the four states of the state machine
        enum motor_states {FORWARD, RIGHT, LEFT, BACKWARDS}state, prevState;
@@ -70,12 +87,9 @@ void main(void)
        uint16_t stateTimer;       //used to stay in a state
        bool isNewState;           //true when the state has switched
 
-       while(1){
+       P2OUT = 0x00;
 
-           PORT4_IRQHandler();
-       }
-
-       while(0)
+       while(1)
        {
           isNewState = (state != prevState);
           prevState = state;  //save state for next time
@@ -88,15 +102,42 @@ void main(void)
               //entry housekeeping
               if(isNewState){
                   stateTimer = 0;
-//                  Motor_Forward(14999, 14999);
-
+                  Motor_Forward(14999, 14999);
+                  LED_Color(RED);
               }
 
               //state business
-//              stateTimer++;
+              stateTimer++;
 
               //exit housekeeping
-              if(stateTimer >= 100){
+              if(true == wasInterrupt){
+                  P2OUT = 0x00;
+                  Motor_Stop();
+                  state = BACKWARDS;
+                  wasInterrupt = false;
+              }
+              break;
+
+          case BACKWARDS:
+              //entry housekeeping
+              if(isNewState){
+                  stateTimer = 0;
+                  Motor_Backward(14999, 14999);
+                  LED_Color(BLUE);
+              }
+
+              //state business
+              stateTimer++;
+
+              //exit housekeeping
+              if( (stateTimer >= 50) & (1 == direction) )
+              {
+                  Motor_Stop();
+                  state = LEFT;
+              }
+
+              else if( (stateTimer >= 50) & (2 == direction))
+              {
                   Motor_Stop();
                   state = RIGHT;
               }
@@ -107,6 +148,7 @@ void main(void)
               if(isNewState){
                   stateTimer = 0;
                   Motor_Right(0, 14999);
+                  LED_Color(GREEN);
               }
 
               //state business
@@ -115,24 +157,8 @@ void main(void)
               //exit housekeeping
               if(stateTimer >= 100){
                   Motor_Stop();
-                  state = BACKWARDS;
-              }
-              break;
-
-          case BACKWARDS:
-              //entry housekeeping
-              if(isNewState){
-                  stateTimer = 0;
-                  Motor_Backward(14999, 14999);
-              }
-
-              //state business
-              stateTimer++;
-
-              //exit housekeeping
-              if(stateTimer >= 100){
-                  Motor_Stop();
-                  state = LEFT;
+                  P4IV &= 0x00;
+                  state = FORWARD;
               }
               break;
 
@@ -141,6 +167,7 @@ void main(void)
               if(isNewState){
                   stateTimer = 0;
                   Motor_Left(14999, 0);
+                  LED_Color(PURPLE);
               }
 
               //state business
@@ -149,6 +176,7 @@ void main(void)
               //exit housekeeping
               if(stateTimer >= 100){
                   Motor_Stop();
+                  P4IV &= 0x00;
                   state = FORWARD;
               }
               break;
